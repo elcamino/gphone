@@ -16,11 +16,13 @@ Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "gphone"
   gem.homepage = "http://github.com/elcamino/gphone"
-  gem.license = "MIT"
+  gem.license = "BSD"
   gem.summary = %Q{ruby bindings for Google's libphonenumber}
   gem.description = %Q{ruby bindings for Google's libphonenumber (see http://code.google.com/p/libphonenumber/)}
   gem.email = "tob@spyz.org"
   gem.authors = ["Tobias Begalke"]
+  gem.files += Dir['ext/gphone/*.{cc,rb}']
+  gem.require_paths = ['ext']
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
@@ -47,3 +49,6 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
+
+require 'rake/extensiontask'
+Rake::ExtensionTask.new('gphone')
