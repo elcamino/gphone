@@ -15,19 +15,20 @@ Gem::Specification.new do |s|
   s.extensions = ["ext/gphone/extconf.rb"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
-    "README.md",
-    "README.rdoc"
+    "README.md"
   ]
   s.files = [
     ".document",
     ".rspec",
     "Gemfile",
     "LICENSE.txt",
-    "README.rdoc",
+    "README.md",
     "Rakefile",
     "VERSION",
+    "ext/gphone/Makefile",
     "ext/gphone/extconf.rb",
     "ext/gphone/gphone.cc",
+    "gphone.gemspec",
     "spec/gphone_spec.rb",
     "spec/spec_helper.rb"
   ]
