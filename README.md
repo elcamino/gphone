@@ -1,7 +1,6 @@
 gphone
 ======
 
-<<<<<<< HEAD
 Ruby bindings to Google's libphonenumber. With gphone you can parse,
 validate and normalize and format phone numbers and determine their
 type. So far this library offers only very basic coverage of the
@@ -37,6 +36,3 @@ Contribute
 
 Feel free to fork this repository and send me pull requests if you add
 functionality.
-=======
-Ruby bindings to Google's libphonenumber
->>>>>>> 22f0ee4ac417a1ac07b0e7030e23feb8ef93e62f
