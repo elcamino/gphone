@@ -1,7 +1,8 @@
 gphone
 ======
 
-Ruby bindings to Google's libphonenumber. With gphone you can parse,
+Ruby bindings to Google's libphonenumber
+(http://code.google.com/p/libphonenumber/). With gphone you can parse,
 validate and normalize and format phone numbers and determine their
 type. So far this library offers only very basic coverage of the
 features the C++ library offers.
