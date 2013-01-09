@@ -14,34 +14,63 @@ namespace {
   class GPhoneException
     : public exception
   {
+    PhoneNumberUtil::ErrorType errorType;
+    string message;
+
+    #define DEFAULT_MESSAGE "Not a valid phone number!";
+
+  public:
+    GPhoneException() {
+      message = DEFAULT_MESSAGE;
+    }
+
+    GPhoneException(PhoneNumberUtil::ErrorType e) {
+      errorType = e;
+
+      message = DEFAULT_MESSAGE;
+    }
+
     virtual const char* what() const throw()
     {
-      return "Not a valid phone number!";
+      return message.c_str();
+    }
+
+    virtual ~GPhoneException() throw() {
+
     }
   };
 
   class GPhone {
     string raw_number;
-    string country_code;
+    string iso_country_code;
     PhoneNumber parsed_number;
     PhoneNumberUtil::PhoneNumberType type;
 
   public:
 
-    GPhone(const string number, const string cc) {
+    GPhone(const string number, const string cc = "ZZ") {
       raw_number = number;
-      country_code = cc;
 
-      if (pu().Parse(raw_number, country_code, &parsed_number) != pu().NO_PARSING_ERROR) {
-        throw GPhoneException();
+      PhoneNumberUtil::ErrorType er = pu().Parse(raw_number, iso_country_code, &parsed_number);
+
+      if (er != pu().NO_PARSING_ERROR) {
+        throw GPhoneException(er);
       }
 
+      if (cc != "ZZ") {
+	iso_country_code = cc;
+      } else {
+	pu().GetRegionCodeForNumber(parsed_number, &iso_country_code);
+      }
+     
       type = pu().GetNumberType(parsed_number);
 
     }
 
     string get_raw_number() { return raw_number; }
-    string get_country_code() { return country_code; }
+    string get_iso_country_code() { return iso_country_code; }
+    uint64 get_national_number() { return parsed_number.national_number(); }
+    int32 get_numeric_country_code() { return parsed_number.country_code(); }
 
     PhoneNumberUtil& pu() {
       return *PhoneNumberUtil::GetInstance();
@@ -52,12 +81,15 @@ namespace {
       string formatted_number;
       pu().Format(parsed_number, PhoneNumberUtil::E164, &formatted_number);
       return formatted_number;
-    }
-
+    }    
 
     bool is_valid()
     {
       return pu().IsValidNumber(parsed_number);
+    }
+
+    bool is_valid_for_region(const string region_code) {
+      return pu().IsValidNumberForRegion(parsed_number, region_code);
     }
 
     bool is_possible()
@@ -96,7 +128,7 @@ namespace {
       case PhoneNumberUtil::VOICEMAIL:
         return "voicemail";
       default:
-        return NULL;
+        return "unknown";
       }
     }
   };
@@ -108,10 +140,13 @@ void Init_gphone() {
   RUBY_TRY
     {
       Class rb_cGPhone = define_class<GPhone>("GPhone")
-        .define_constructor(Constructor<GPhone, const string, const string>())
+        .define_constructor(Constructor<GPhone, const string, const string>(), (Arg("number"), Arg("country_code") = (string) "ZZ"))
         .define_method("raw_number", &GPhone::get_raw_number)
-        .define_method("country_code", &GPhone::get_country_code)
+        .define_method("country_code", &GPhone::get_iso_country_code)
+        .define_method("numeric_country_code", &GPhone::get_numeric_country_code)
+        .define_method("national_number", &GPhone::get_national_number)
         .define_method("valid?", &GPhone::is_valid)
+	.define_method("valid_for_region?", &GPhone::is_valid_for_region)
         .define_method("possible?", &GPhone::is_possible)
         .define_method("format_national", &GPhone::format_national)
         .define_method("normalize", &GPhone::normalize)

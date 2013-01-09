@@ -39,6 +39,7 @@ RSpec::Core::RakeTask.new(:rcov) do |spec|
 end
 
 task :default => :spec
+task :rebuild => [:clean, :clobber, :compile, :spec]
 
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
