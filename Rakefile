@@ -59,7 +59,25 @@ end
 
 require 'rake/extensiontask'
 Gem::PackageTask.new($gemspec) do |pkg|
+	pkg.need_tar = false
+	pkg.need_zip = false
 end
 
 Rake::ExtensionTask.new('gphone', $gemspec) do |ext|
 end
+
+CLEAN.include 'lib/**/*.so'
+
+Rake::Task.tasks.each do |task_name|
+  case task_name.to_s
+    when /^native/
+       task_name.prerequisites.unshift("fix_rake_compiler_gemspec_dump")
+   end
+end
+
+task :fix_rake_compiler_gemspec_dump do
+   %w{files extra_rdoc_files test_files}.each do |accessor|
+     $gemspec.send(accessor).instance_eval { @exclude_procs = Array.new }
+   end
+end
+
