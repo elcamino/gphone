@@ -12,7 +12,7 @@ end
 require 'rake'
 
 require 'jeweler'
-Jeweler::Tasks.new do |gem|
+jeweler_tasks = Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "gphone"
   gem.homepage = "http://github.com/elcamino/gphone"
@@ -23,8 +23,14 @@ Jeweler::Tasks.new do |gem|
   gem.authors = ["Tobias Begalke"]
   gem.files += Dir['ext/gphone/*.{cc,rb}']
   gem.require_paths = ['ext']
+	gem.platform = Gem::Platform::RUBY
+	gem.extensions = FileList["ext/gphone/extconf.rb"]
   # dependencies defined in Gemfile
 end
+
+$gemspec = jeweler_tasks.gemspec
+$gemspec.version = jeweler_tasks.jeweler.version
+
 Jeweler::RubygemsDotOrgTasks.new
 
 require 'rspec/core'
@@ -52,4 +58,8 @@ Rake::RDocTask.new do |rdoc|
 end
 
 require 'rake/extensiontask'
-Rake::ExtensionTask.new('gphone')
+Gem::PackageTask.new($gemspec) do |pkg|
+end
+
+Rake::ExtensionTask.new('gphone', $gemspec) do |ext|
+end
