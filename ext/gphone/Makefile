@@ -12,12 +12,12 @@ ECHO = $(ECHO1:0=@echo)
 #### Start of system configuration section. ####
 
 srcdir = .
-topdir = /usr/local/rvm/rubies/ruby-1.9.3-p327/include/ruby-1.9.1
-hdrdir = /usr/local/rvm/rubies/ruby-1.9.3-p327/include/ruby-1.9.1
-arch_hdrdir = /usr/local/rvm/rubies/ruby-1.9.3-p327/include/ruby-1.9.1/$(arch)
+topdir = /usr/local/rvm/rubies/ruby-1.9.3-p392/include/ruby-1.9.1
+hdrdir = /usr/local/rvm/rubies/ruby-1.9.3-p392/include/ruby-1.9.1
+arch_hdrdir = /usr/local/rvm/rubies/ruby-1.9.3-p392/include/ruby-1.9.1/$(arch)
 VPATH = $(srcdir):$(arch_hdrdir)/ruby:$(hdrdir)/ruby
 
-prefix = $(DESTDIR)/usr/local/rvm/rubies/ruby-1.9.3-p327
+prefix = $(DESTDIR)/usr/local/rvm/rubies/ruby-1.9.3-p392
 
 rubylibprefix = $(libdir)/$(RUBY_BASE_NAME)
 
@@ -61,7 +61,7 @@ localstatedir = $(prefix)/var
 
 sharedstatedir = $(prefix)/com
 
-sysconfdir = $(prefix)/etc
+sysconfdir = $(DESTDIR)/etc
 
 datadir = $(datarootdir)
 
@@ -92,8 +92,8 @@ CC = gcc
 CXX = g++
 LIBRUBY = $(LIBRUBY_SO)
 LIBRUBY_A = lib$(RUBY_SO_NAME)-static.a
-LIBRUBYARG_SHARED = -Wl,-R -Wl,$(libdir) -L$(libdir) -l$(RUBY_SO_NAME)
-LIBRUBYARG_STATIC = -Wl,-R -Wl,/usr/local/rvm/rubies/ruby-1.9.3-p327/lib -L/usr/local/rvm/rubies/ruby-1.9.3-p327/lib -lruby-static
+LIBRUBYARG_SHARED = '-Wl,-rpath,$${ORIGIN}/../lib' -Wl,-R -Wl,$(libdir) -L$(libdir) -l$(RUBY_SO_NAME)
+LIBRUBYARG_STATIC = '-Wl,-rpath,${ORIGIN}/../lib' -Wl,-R -Wl,/usr/local/rvm/rubies/ruby-1.9.3-p392/lib -L/usr/local/rvm/rubies/ruby-1.9.3-p392/lib -lruby-static
 empty =
 OUTFLAG = -o $(empty)
 COUTFLAG = -o $(empty)
@@ -103,12 +103,12 @@ cflags   =  $(optflags) $(debugflags) $(warnflags)
 optflags = -O3
 debugflags = -ggdb
 warnflags = -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration
-CFLAGS   = -fPIC -I/usr/local/rvm/usr/include -fPIC $(ARCH_FLAG)
+CFLAGS   = -fPIC $(cflags)  -fPIC $(ARCH_FLAG)
 INCFLAGS = -I. -I$(arch_hdrdir) -I$(hdrdir)/ruby/backward -I$(hdrdir) -I$(srcdir)
 DEFS     = 
-CPPFLAGS =   $(DEFS) $(cppflags)  -I/usr/local/rvm/gems/ruby-1.9.3-p327/gems/rice-1.4.3/ruby/lib/include
+CPPFLAGS =   $(DEFS) $(cppflags)  -I/usr/local/rvm/gems/ruby-1.9.3-p392/gems/rice-1.6.0/ruby/lib/include
 CXXFLAGS = $(CFLAGS)  -Wall -g
-ldflags  = -L. -L/usr/local/rvm/usr/lib -rdynamic -Wl,-export-dynamic  -L/usr/local/rvm/gems/ruby-1.9.3-p327/gems/rice-1.4.3/ruby/lib/lib
+ldflags  = -L.  -rdynamic -Wl,-export-dynamic  -L/usr/local/rvm/gems/ruby-1.9.3-p392/gems/rice-1.6.0/ruby/lib/lib -lrice
 dldflags = 
 ARCH_FLAG = 
 DLDFLAGS = $(ldflags) $(dldflags) $(ARCH_FLAG)
@@ -123,7 +123,7 @@ RUBY_SO_NAME = ruby
 arch = x86_64-linux
 sitearch = $(arch)
 ruby_version = 1.9.1
-ruby = /usr/local/rvm/rubies/ruby-1.9.3-p327/bin/ruby
+ruby = /usr/local/rvm/rubies/ruby-1.9.3-p392/bin/ruby
 RUBY = $(ruby)
 RM = rm -f
 RM_RF = $(RUBY) -run -e rm -- -rf
@@ -154,9 +154,9 @@ extout =
 extout_prefix = 
 target_prefix = 
 LOCAL_LIBS = 
-LIBS = -lphonenumber -lboost_thread -lrice -Wl,-R -Wl,/usr/local/rvm/rubies/ruby-1.9.3-p327/lib -L/usr/local/rvm/rubies/ruby-1.9.3-p327/lib -lruby -lpthread -lrt -ldl -lcrypt -lm   -lc
-SRCS = gphone.cc
-OBJS = gphone.o
+LIBS = -lgeocoding -lphonenumber -lboost_thread '-Wl,-rpath,${ORIGIN}/../lib' -Wl,-R -Wl,/usr/local/rvm/rubies/ruby-1.9.3-p392/lib -L/usr/local/rvm/rubies/ruby-1.9.3-p392/lib -lruby -lpthread -lrt -ldl -lcrypt -lm   -lc
+SRCS = gphone.cc gphone_number_matcher.cc gphone_offline_geocoder.cc gphone_ruby.cc
+OBJS = gphone.o gphone_number_matcher.o gphone_offline_geocoder.o gphone_ruby.o
 TARGET = gphone
 DLLIB = $(TARGET).so
 EXTSTATIC = 
@@ -178,11 +178,12 @@ static: $(STATIC_LIB)
 .PHONY: all install static install-so install-rb
 .PHONY: clean clean-so clean-rb
 
+clean-static::
 clean-rb-default::
 clean-rb::
 clean-so::
-clean: clean-so clean-rb-default clean-rb
-		@-$(RM) $(CLEANLIBS) $(CLEANOBJS) $(CLEANFILES)
+clean: clean-so clean-static clean-rb-default clean-rb
+		-$(Q)$(RM) $(CLEANLIBS) $(CLEANOBJS) $(CLEANFILES) .*.time
 
 distclean-rb-default::
 distclean-rb::

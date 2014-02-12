@@ -20,6 +20,11 @@ Gemfile.lock
 *~
 **/*~
 
+*.so
+*.o
+
+*.log
+
 lib/gphone.so
 
 tmp

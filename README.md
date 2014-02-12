@@ -10,6 +10,8 @@ features the C++ library offers.
 Usage
 -----
 
+**GPhone**
+
 ```ruby
 require 'gphone'
 
@@ -29,7 +31,44 @@ ph.format_national
 
 ph.type
 > "fixed line"
+
+ph.raw_number
+> "+49 09131/76352435"
+
+ph.country_code
+> 'DE'
+
+ph.numeric_country_code
+> 49
+
+ph.national_number
+> 913176352435
 ```
+
+**GPhoneOfflineGeocoder**
+
+
+```ruby
+
+geocoder = GPhoneOfflineGeocoder.new()
+
+gastgeocoder.get_location_for_number('12063554274')
+> "Washington"
+
+```
+
+**GPhoneNumberMatcher**
+
+
+```ruby
+
+m = GPhoneNumberMatcher.new('Hier steht eine Nummer: 0211/543235-3, und hier noch eine: +1 213 542 8427.', 'DE')
+m.numbers
+> ["0211/543235-3", "+1 213 542 8427"]
+
+
+```
+
 
 
 Contribute
