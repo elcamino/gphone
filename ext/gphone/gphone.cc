@@ -53,6 +53,7 @@ namespace {
 
     GPhone(const string number, const string cc = "ZZ") {
       raw_number = number;
+      iso_country_code = cc;
 
       PhoneNumberUtil::ErrorType er = pu().Parse(raw_number, iso_country_code, &parsed_number);
 
@@ -61,11 +62,11 @@ namespace {
       }
 
       if (cc != "ZZ") {
-	iso_country_code = cc;
+        iso_country_code = cc;
       } else {
-	pu().GetRegionCodeForNumber(parsed_number, &iso_country_code);
+        pu().GetRegionCodeForNumber(parsed_number, &iso_country_code);
       }
-     
+
       type = pu().GetNumberType(parsed_number);
 
     }
@@ -84,7 +85,7 @@ namespace {
       string formatted_number;
       pu().Format(parsed_number, PhoneNumberUtil::E164, &formatted_number);
       return formatted_number;
-    }    
+    }
 
     bool is_valid()
     {
