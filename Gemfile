@@ -1,6 +1,5 @@
 source "http://rubygems.org"
 
-gemspec
 gem 'rice'
 
 group :test do
@@ -8,7 +7,6 @@ group :test do
 end
 
 group :development do
-  gem "ruby-debug19"
   gem "rspec", "~> 2.8.0"
   gem "rdoc", "~> 3.12"
   gem "bundler", ">= 1.0.0"
