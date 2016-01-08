@@ -18,6 +18,9 @@ void Init_gphone() {
         .define_method("possible?", &GPhone::is_possible)
         .define_method("format_national", &GPhone::format_national)
         .define_method("normalize", &GPhone::normalize)
+        .define_method("national_prefix", &GPhone::national_prefix)
+        .define_method("area_code", &GPhone::area_code)
+        .define_method("subscriber_number", &GPhone::subscriber_number)
         .define_method("type", &GPhone::get_type);
 
       Class rb_cGPhoneOfflineGeocoder = define_class<GPhoneOfflineGeocoder>("GPhoneOfflineGeocoder")

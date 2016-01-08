@@ -3,6 +3,7 @@
 #include "rice/Data_Type.hpp"
 #include "rice/Constructor.hpp"
 #include <string>
+#include <iostream>
 #include <phonenumbers/phonenumberutil.h>
 #include <phonenumbers/phonenumbermatcher.h>
 
@@ -106,6 +107,55 @@ namespace {
       string formatted_number;
       pu().Format(parsed_number, PhoneNumberUtil::NATIONAL, &formatted_number);
       return formatted_number;
+    }
+
+    const string national_prefix()
+    {
+      string region_code;
+      string national_prefix;
+
+      pu().GetRegionCodeForCountryCode(parsed_number.country_code(), &region_code);
+      pu().GetNddPrefixForRegion(region_code, true, &national_prefix);
+
+      return national_prefix;
+    }
+
+    const string area_code()
+    {
+      string area_code;
+      string national_significant_number;
+      string region_code;
+
+      pu().GetNationalSignificantNumber(parsed_number, &national_significant_number);
+      pu().GetRegionCodeForCountryCode(parsed_number.country_code(), &region_code);
+
+
+      int area_code_length = pu().GetLengthOfGeographicalAreaCode(parsed_number);
+
+      if (area_code_length > 0) {
+        area_code = national_significant_number.substr(0, area_code_length);
+      } else {
+        area_code = "";
+      }
+
+      return area_code;
+    }
+
+    const string subscriber_number()
+    {
+      string subscriber_number;
+      string national_significant_number;
+      pu().GetNationalSignificantNumber(parsed_number, &national_significant_number);
+
+      int area_code_length = pu().GetLengthOfGeographicalAreaCode(parsed_number);
+
+      if (area_code_length > 0) {
+        subscriber_number = national_significant_number.substr(area_code_length, string::npos);
+      } else {
+        subscriber_number = national_significant_number;
+      }
+
+      return subscriber_number;
     }
 
     const string get_type()
