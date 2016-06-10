@@ -113,7 +113,7 @@ describe "GPhone.new('+12069735100') (i.e. a fully qualified number)" do
   its(:area_code) { should == '206' }
   its(:subscriber_number) { should == '9735100' }
   its(:national_prefix) { should == '1' }
-  its(:type) { should == "unknown" }
+  its(:type) { should == "fixed line or mobile" }
 end
 
 describe "GPhone.new('12345234') (ie. with an invalid number)" do

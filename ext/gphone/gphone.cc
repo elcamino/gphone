@@ -165,6 +165,8 @@ namespace {
         return "fixed line";
       case PhoneNumberUtil::MOBILE:
         return "mobile";
+      case PhoneNumberUtil::FIXED_LINE_OR_MOBILE:
+        return "fixed line or mobile";
       case PhoneNumberUtil::TOLL_FREE:
         return "toll free";
       case PhoneNumberUtil::PREMIUM_RATE:
